@@ -1,5 +1,7 @@
 FROM continuumio/miniconda3:latest
-MAINTAINER Fangyu Wu (fangyuwu@berkeley.edu)
+
+LABEL version="0.3.0"
+LABEL maintainer = "Fangyu Wu (fangyuwu@berkeley.edu)"
 
 # System
 RUN apt-get update && \
