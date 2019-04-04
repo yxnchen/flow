@@ -49,7 +49,6 @@ RUN echo "source activate flow" >> /root/.bashrc && \
 # install SUMO
 RUN cd ~/flow/scripts && \
     ./setup_sumo_ubuntu1604.sh && \
-    sumo --version && \
     echo 'export SUMO_HOME="$HOME/sumo"' >> ~/.bashrc && \
     echo 'export PATH="$HOME/sumo/bin:$PATH"' >> ~/.bashrc && \
     echo 'export PYTHONPATH="$HOME/sumo/tools:$PYTHONPATH"' >> ~/.bashrc
