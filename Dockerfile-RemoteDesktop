@@ -32,10 +32,7 @@ RUN apt-get update --fix-missing && apt-get upgrade -y && \
     apt-get install -y  libproj-dev libfox-1.6-dev libxml2-dev libxslt1-dev build-essential curl unzip flex bison python python-dev python3-dev && \
     rm -rf /var/lib/apt/lists/*
 
-RUN mkdir ~/.pip/ && touch ~/.pip/pip.conf && \
-    echo "[global] \n index-url = http://mirrors.aliyun.com/pypi/simple/\n\
-    [install] \n trusted-host = mirrors.aliyun.com" > ~/.pip/pip.conf && \
-    pip --no-cache-dir install --upgrade pip setuptools && \
+RUN pip --no-cache-dir install --upgrade pip setuptools && \
     pip --no-cache-dir install cmake cython
 
 # install Flow
