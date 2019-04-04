@@ -33,23 +33,20 @@ RUN apt-get update --fix-missing && apt-get upgrade -y && \
     rm -rf /var/lib/apt/lists/*
 
 RUN pip --no-cache-dir install --upgrade pip setuptools && \
+    conda update -n base conda && \
     pip --no-cache-dir install cmake cython
 
 # install Flow
 RUN cd ~ && git clone https://github.com/flow-project/flow.git && \
     cd flow && \
     conda env create -f environment.yml && \
-    source activate flow && \
-    python install -e . && \
+    python setup.py develop && \
     echo 'export PYTHONPATH="$HOME/flow:$PYTHONPATH"' >> ~/.bashrc
 
-# install SUMO
-# RUN cd ~ && \
-#     git clone --recursive https://github.com/eclipse/sumo.git && \
-#     cd sumo && \
-#     git checkout cbe5b73d781376c939b07c6127803a804c803ed7 && \
-#     mkdir build/cmake-build
+RUN echo "source activate flow" >> /root/.bashrc && \
+    echo "source activate flow"
 
+# install SUMO
 RUN cd ~/flow/scripts && \
     ./setup_sumo_ubuntu1604.sh && \
     sumo --version && \
@@ -62,15 +59,13 @@ RUN cd ~ && \
     git clone https://github.com/cathywu/rllab-multiagent.git && \
     cd rllab-multiagent && \
     python setup.py develop && \
-    echo 'export PYTHONPATH="$HOME/rllab-multiagent:$PYTHONPATH"' >> ~/.bashrc && \
-    source ~/.bashrc
+    echo 'export PYTHONPATH="$HOME/rllab-multiagent:$PYTHONPATH"' >> ~/.bashrc
 
-RUN echo "source activate flow" >> /root/.bashrc
-RUN echo "source activate flow"
 ENV BASH_ENV /root/.bashrc
 
 ##  RAY
-RUN apt-get install -y libboost-dev libboost-test-dev libboost-program-options-dev libboost-filesystem-dev \
+RUN apt-get update && \
+    apt-get install -y libboost-dev libboost-test-dev libboost-program-options-dev libboost-filesystem-dev \
     libboost-thread-dev libevent-dev automake libtool flex bison pkg-config g++ libssl-dev
 RUN git clone https://github.com/apache/thrift && \
     cd thrift && \
@@ -79,6 +74,7 @@ RUN git clone https://github.com/apache/thrift && \
 
 #### RAY 
 RUN cd ~ && conda install libgcc jupyter && \
+    apt-get update && \
     apt-get install -y cmake pkg-config build-essential autoconf curl libtool libboost-dev libboost-filesystem-dev libboost-system-dev unzip bison openssl && \
     git clone https://github.com/eugenevinitsky/ray && \
     cd ray/python && python setup.py develop && \
