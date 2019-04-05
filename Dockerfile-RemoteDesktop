@@ -36,14 +36,25 @@ RUN pip --no-cache-dir install --upgrade pip setuptools && \
     conda update -n base conda && \
     pip --no-cache-dir install cmake cython
 
-# install Flow and SUMO
+# install SUMO
+RUN cd ~ && \
+    git clone --recursive https://github.com/eclipse/sumo.git && \
+    cd sumo && \
+    git checkout cbe5b73 && \
+    mkdir build/cmake-build && \
+    cd build/cmake-build && \
+    cmake ../.. && \
+    make && \
+    echo 'export SUMO_HOME="$HOME/sumo"' >> ~/.bashrc && \
+    echo 'export PATH="$HOME/sumo/bin:$PATH"' >> ~/.bashrc && \
+    echo 'export PYTHONPATH="$HOME/sumo/tools:$PYTHONPATH"' >> ~/.bashrc
+
+# install Flow
 RUN cd ~ && git clone https://github.com/flow-project/flow.git && \
     cd flow && \
-    git checkout v0.3.0 && \
     conda env create -f environment.yml && \
     python setup.py develop && \
     echo 'export PYTHONPATH="$HOME/flow:$PYTHONPATH"' >> ~/.bashrc && \
-    ./scripts/setup_sumo_ubuntu1604.sh
 
 # install Rllab
 RUN cd ~ && \
