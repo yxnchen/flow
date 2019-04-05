@@ -5,7 +5,7 @@ USER 0
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 ENV PATH /opt/conda/bin:$PATH
 
-RUN apt-get update && \
+RUN apt-get update --fix-missing && \
     apt-get install -y wget bzip2 ca-certificates libglib2.0-0 libxext6 \
     libsm6 libxrender1 git mercurial subversion && \
     rm -rf /var/lib/apt/lists/*
@@ -47,8 +47,8 @@ RUN echo "source activate flow" >> /root/.bashrc && \
     echo "source activate flow"
 
 # install SUMO
-RUN cd ~/flow/scripts && \
-    ./setup_sumo_ubuntu1604.sh && \
+RUN cd ~/flow && \
+    ./scripts/setup_sumo_ubuntu1604.sh && \
     echo 'export SUMO_HOME="$HOME/sumo"' >> ~/.bashrc && \
     echo 'export PATH="$HOME/sumo/bin:$PATH"' >> ~/.bashrc && \
     echo 'export PYTHONPATH="$HOME/sumo/tools:$PYTHONPATH"' >> ~/.bashrc
@@ -57,6 +57,7 @@ RUN cd ~/flow/scripts && \
 RUN cd ~ && \
     git clone https://github.com/cathywu/rllab-multiagent.git && \
     cd rllab-multiagent && \
+    conda env create -f environment.yml && \
     python setup.py develop && \
     echo 'export PYTHONPATH="$HOME/rllab-multiagent:$PYTHONPATH"' >> ~/.bashrc
 
@@ -65,7 +66,8 @@ ENV BASH_ENV /root/.bashrc
 ##  RAY
 RUN apt-get update && \
     apt-get install -y libboost-dev libboost-test-dev libboost-program-options-dev libboost-filesystem-dev \
-    libboost-thread-dev libevent-dev automake libtool flex bison pkg-config g++ libssl-dev
+    libboost-thread-dev libevent-dev automake libtool flex bison pkg-config g++ libssl-dev && \
+    rm -rf /var/lib/apt/lists/*
 RUN git clone https://github.com/apache/thrift && \
     cd thrift && \
     ./bootstrap.sh && \
@@ -75,9 +77,10 @@ RUN git clone https://github.com/apache/thrift && \
 RUN cd ~ && conda install libgcc jupyter && \
     apt-get update && \
     apt-get install -y cmake pkg-config build-essential autoconf curl libtool libboost-dev libboost-filesystem-dev libboost-system-dev unzip bison openssl && \
+    rm -rf /var/lib/apt/lists/* && \
     git clone https://github.com/eugenevinitsky/ray && \
     cd ray/python && python setup.py develop && \
     echo 'export PYTHONPATH="$HOME/flow:$PYTHONPATH"' >> ~/.bashrc && \
-    pip install lz4 gym==0.10.5
+    pip --no-cache-dir install lz4 gym==0.10.5
 
 USER 0
