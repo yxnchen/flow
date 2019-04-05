@@ -36,22 +36,14 @@ RUN pip --no-cache-dir install --upgrade pip setuptools && \
     conda update -n base conda && \
     pip --no-cache-dir install cmake cython
 
-# install Flow
+# install Flow and SUMO
 RUN cd ~ && git clone https://github.com/flow-project/flow.git && \
     cd flow && \
+    git checkout v0.3.0 && \
     conda env create -f environment.yml && \
     python setup.py develop && \
-    echo 'export PYTHONPATH="$HOME/flow:$PYTHONPATH"' >> ~/.bashrc
-
-RUN echo "source activate flow" >> /root/.bashrc && \
-    echo "source activate flow"
-
-# install SUMO
-RUN cd ~/flow && \
-    ./scripts/setup_sumo_ubuntu1604.sh && \
-    echo 'export SUMO_HOME="$HOME/sumo"' >> ~/.bashrc && \
-    echo 'export PATH="$HOME/sumo/bin:$PATH"' >> ~/.bashrc && \
-    echo 'export PYTHONPATH="$HOME/sumo/tools:$PYTHONPATH"' >> ~/.bashrc
+    echo 'export PYTHONPATH="$HOME/flow:$PYTHONPATH"' >> ~/.bashrc && \
+    ./scripts/setup_sumo_ubuntu1604.sh
 
 # install Rllab
 RUN cd ~ && \
@@ -61,7 +53,16 @@ RUN cd ~ && \
     python setup.py develop && \
     echo 'export PYTHONPATH="$HOME/rllab-multiagent:$PYTHONPATH"' >> ~/.bashrc
 
+RUN echo "source activate flow" >> /root/.bashrc && \
+    echo "source activate flow"
 ENV BASH_ENV /root/.bashrc
+
+# install SUMO
+# RUN cd ~/flow && \
+#     ./scripts/setup_sumo_ubuntu1604.sh && \
+#     echo 'export SUMO_HOME="$HOME/sumo"' >> ~/.bashrc && \
+#     echo 'export PATH="$HOME/sumo/bin:$PATH"' >> ~/.bashrc && \
+#     echo 'export PYTHONPATH="$HOME/sumo/tools:$PYTHONPATH"' >> ~/.bashrc
 
 ##  RAY
 RUN apt-get update && \
